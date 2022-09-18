@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="eng">
+<head>
+    <meta charset="UTF-8">
+    <meta http=equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="viewport" content="width=device-width,height=768" initia-scale=1">
+    <title>Puzzle by petter@wahlman.no</title>
+    <link href="https://fonts.cdnfonts.com/css/juice-avocado" rel="stylesheet">
+    <link rel="stylesheet" href="style/style.css" />
+
+    <link type="image/png" rel="shortcut icon" href="./assets/favicon.ico"/>
+</head>
+<body>
+    <div id="board" width="1024">
+        <div class='wrapper'>
+            <div id="menu" width="900">
+                <div class="dropdown">
+                    <button id="spriteBtn" class="dropbtn">Level</button>
+                    <div class="dropdown-content">
+                        <a href=".?spriteIdx=0">Mahjong</a>
+                        <a href=".?spriteIdx=1">Chess</a>
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <button id="demoId" class="dropbtn">Demo</button>
+                    <div id="demo" class="dropdown-content">
+                        <a href="#" onclick="demo(true)">On</a>
+                        <a href="#" onclick="demo(false)">Off</a>
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <button id="helpBtn" class="dropbtn">Help</button>
+                    <div class="dropdown-content">
+                        <a href="#" onclick="board.hint(true);">Hint</a>
+                        <a href="#" onclick="board.shuffle(true);">Shuffle</a>
+                    </div>
+                </div>
+            </div>
+            <div id="score_div">
+                <canvas id="score_canvas" width="660" height="51"></canvas>
+            </div>
+        </div>
+
+        <div id="canvas_div">
+            <canvas id="board_canvas" width="1024" height="768"></canvas>
+        </div>
+        <div id="about_div" width="100%">
+            <pre>Clear two identical tiles if:                          </pre>
+            <pre>You can draw a connecting line between them.           </pre>
+            <pre>The line may make no more than two ninety degree angles</pre>
+            <pre>The line can not run through any other tiles           </pre>
+            <pre>Note: using help incurs a 60 second penalty.</pre>
+        </div>
+        </div>
+    <script src="script.js"> </script>
+</body>
+</html>
