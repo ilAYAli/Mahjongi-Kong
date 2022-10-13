@@ -22,7 +22,8 @@ body {
     margin-right: auto;
     margin-bottom: 64px;
     padding-left: 64px;
-    position: absolute
+    position: absolute;
+    font-family: "Arial";
 }
 
 .wrapper{
@@ -31,7 +32,7 @@ body {
 }
 
 #score_div {
-    margin-left: 300px;
+    margin-left: 750px;
     position: absolute
 }
 

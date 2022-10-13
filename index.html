@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http=equiv="X-UA-Compatible" content="IE=Edge">
     <meta name="viewport" content="width=device-width,height=768" initia-scale=1">
-    <title>Puzzle by petter@wahlman.no</title>
+    <title>MahjongiKong</title>
     <link href="https://fonts.cdnfonts.com/css/juice-avocado" rel="stylesheet">
     <link rel="stylesheet" href="style/style.css" />
 
@@ -23,9 +23,14 @@
                 </div>
                 <div class="dropdown">
                     <button id="demoId" class="dropbtn">Demo</button>
-                    <div id="demo" class="dropdown-content">
+                    <div class="dropdown-content">
                         <a href="#" onclick="demo(true)">On</a>
                         <a href="#" onclick="demo(false)">Off</a>
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <button id="highscore" class="dropbtn">Record</button>
+                    <div id="highscore_div" class="dropdown-content">
                     </div>
                 </div>
                 <div class="dropdown">
@@ -37,7 +42,7 @@
                 </div>
             </div>
             <div id="score_div">
-                <canvas id="score_canvas" width="660" height="51"></canvas>
+                <canvas id="score_canvas" width="500" height="51"></canvas>
             </div>
         </div>
 
@@ -51,7 +56,8 @@
             <pre>The line can not run through any other tiles           </pre>
             <pre>Note: using help incurs a 60 second penalty.</pre>
         </div>
-        </div>
+    </div>
     <script src="script.js"> </script>
+    <script src="highscore.js"> </script>
 </body>
 </html>

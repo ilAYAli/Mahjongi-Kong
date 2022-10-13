@@ -29,6 +29,7 @@ const SOLVED = {
 
 // ---[ triggers ]--------------------------------------------------------------
 window.onload = () => {
+    loadHighscore();
     let tmp = document.getElementById("canvas");
     if (tmp) {
         ;//tmp.width = window.innerWidth;
@@ -741,6 +742,7 @@ class GameBoard {
 
                         const remaining_pices = this.#getNumActiveTiles();
                         if (!remaining_pices) {
+                            gameOver(timer.elapsed);
                             board.init();
                             return;
                         }
@@ -913,7 +915,7 @@ timer.init(updateScoreCanvas);
 var next_hint = DEFAULT_TIMEOUT;
 function updateScoreCanvas(timer)
 {
-    let xpos = 100;
+    let xpos = 0;
     let ypos = 40;
 
     const canvas = document.getElementById('score_canvas');
@@ -928,14 +930,6 @@ function updateScoreCanvas(timer)
                  xpos, ypos);
 
     next_hint--;
-    if (next_hint < DEFAULT_TIMEOUT -30) {
-        let remain = new Date(null);
-        remain.setSeconds(next_hint);
-
-        ctx.fillText("Hint:" + remain.toISOString().slice(14, 19),
-                      xpos + ctx.canvas.width - 275, ypos);
-    }
-
     if (next_hint <= 0) {
         next_hint = DEFAULT_TIMEOUT;
         console.log("scheduling autosolve");
