@@ -682,7 +682,8 @@ class GameBoard {
         board.draw_arrows = should_draw_arrows;
 
         if (interactive) {
-            timer.elapsed += 60;
+            if (status != SOLVED.none)
+                timer.elapsed += 60;
             this.unselectAll();
         }
 
