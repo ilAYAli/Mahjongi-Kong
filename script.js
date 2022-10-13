@@ -118,6 +118,8 @@ class GameBoard {
         this.tiles = [];
         this.arrows = [];
 
+        this.shuffled = [];
+
         this.score = 0;
         this.margin = 0;
 
@@ -363,23 +365,11 @@ class GameBoard {
     }
 
 // public:
-    unselectTilePair () {
+    unselectAll () {
         let board_size = this.cols * this.rows;
-        let t1 = -1;
-        let t2 = -1;
         for (let i = 0; i < board_size; i++) {
             if (this.tiles[i][1] == TILE.selected) {
-                if (t1 == -1)
-                    t1 = i;
-                else
-                    t2 = i;
-            }
-            if (t1 != -1 && t2 != -1) {
-                if (this.tiles[t1][0] != this.tiles[t2][0]) {
-                    console.log("ERROR SELECTED: ", this.tiles[t1][0], this.tiles[t2][0]);
-                }
-                this.tiles[t1][1] = TILE.active;
-                this.tiles[t2][1] = TILE.active;
+                this.tiles[i][1] = TILE.active;
             }
         }
     }
@@ -592,13 +582,21 @@ class GameBoard {
         const tmp = this.tiles[t1_idx];
         this.tiles[t1_idx] = this.tiles[t2_idx]
         this.tiles[t2_idx] = tmp;
-        this.draw(ctx);
+        this.shuffled.push(t1_idx);
+        this.shuffled.push(t2_idx);
 
         const solvable = this.solve_board();
         if (!solvable) {
             console.log(attempt, ": not solvable, re-shuffling");
-            this.shuffle(false, attempt);
+            return this.shuffle(false, attempt);
         }
+        console.log("shuffled:", this.shuffled.length);
+        this.shuffled.forEach((elt) => {
+            this.tiles[elt][1] = TILE.selected;
+        });
+        this.draw(ctx);
+        this.shuffled = [];
+        this.unselectAll();
 
         if (interactive)
             timer.elapsed += 60;
@@ -685,7 +683,7 @@ class GameBoard {
 
         if (interactive) {
             timer.elapsed += 60;
-            this.unselectTilePair();
+            this.unselectAll();
         }
 
         return status;
