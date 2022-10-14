@@ -27,13 +27,17 @@ const SOLVED = {
 }
 
 
+function resize() {
+    ctx.canvas.width  = 1024;
+    ctx.canvas.height = 768;
+    //ctx.canvas.width  = window.innerWidth;
+    //ctx.canvas.height = window.innerHeight;
+}
+
 // ---[ triggers ]--------------------------------------------------------------
 window.onload = () => {
     loadHighscore();
-    let tmp = document.getElementById("canvas");
-    if (tmp) {
-        ;//tmp.width = window.innerWidth;
-    }
+    resize();
     board.init();
 }
 
@@ -42,8 +46,7 @@ var scheduledRedraw;
 window.addEventListener('resize', () => {
     clearTimeout(scheduledRedraw);
     scheduledRedraw = setTimeout(() => {
-        ctx.canvas.width  = 1024;
-        ctx.canvas.height = 768;
+        resize();
         board.draw(ctx);
     }, 100);
 });
@@ -111,6 +114,8 @@ class GameBoard {
         this.active_rows = rows - 2;
         this.active_cols = cols - 2;
         this.active_size = this.active_rows * this.active_cols;
+        this.tile_width = 0;
+        this.tile_height = 0;
 
         this.src_tile = 0;
         this.dst_tile = 0;
@@ -159,8 +164,8 @@ class GameBoard {
         this.arrows.forEach((arrow, index, array) => {
             let [x1, y1] = board.coordToPos(arrow[0], arrow[1]);
             let [x2, y2] = board.coordToPos(arrow[2], arrow[3])
-            x1 += (this.sheet.tile_width/2); x2 += (this.sheet.tile_width/2);
-            y1 += (this.sheet.tile_height/2); y2 += (this.sheet.tile_height/2);
+            x1 += (this.tile_width/2); x2 += (this.tile_width/2);
+            y1 += (this.tile_height/2); y2 += (this.tile_height/2);
             if (index != array.length -1) {
                 this.#drawLine(ctx, x1, y1, x2, y2);
             } else {
@@ -174,13 +179,13 @@ class GameBoard {
     }
 
     #drawOutline(ctx) {
-        let active_width = (board.rows - 2) * this.sheet.tile_width;
-        let active_height = (board.cols - 2) * this.sheet.tile_height;
+        let active_width = (board.rows - 2) * this.tile_width;
+        let active_height = (board.cols - 2) * this.tile_height;
 
         ctx.beginPath();
 
-        let top_left_x = this.sheet.tile_width;
-        let top_left_y = this.sheet.tile_height;
+        let top_left_x = this.tile_width;
+        let top_left_y = this.tile_height;
 
         let top_right_x = top_left_x + active_width;
         let top_right_y = top_left_y;
@@ -231,8 +236,9 @@ class GameBoard {
     }
 
     #posToBoardCoord(x, y) {
-        let tile_x = Math.floor(x / this.sheet.tile_width);
-        let tile_y = Math.floor(y / this.sheet.tile_height);
+        console.log("posToBoardCoord:", x, y, "->", x / this.tile_width, y / this.tile_height);
+        let tile_x = Math.floor(x / this.tile_width);
+        let tile_y = Math.floor(y / this.tile_height);
         return [tile_x, tile_y]
     }
 
@@ -418,6 +424,8 @@ class GameBoard {
 
     draw(ctx) {
         ctx.clearRect(0, 30, ctx.canvas.width, ctx.canvas.height);
+        this.tile_width = ctx.canvas.width / board.rows;
+        this.tile_height = this.tile_width;//ctx.canvas.width / board.cols;
         this.#drawOutline(ctx);
 
         for (let i = 0; i < this.tiles.length; i++) {
@@ -435,11 +443,9 @@ class GameBoard {
 
             const sx = tile_x * this.sheet.tile_width;
             const sy = tile_y * this.sheet.tile_height;
-            const dx = board_x * 64;//this.sheet.tile_width;
-            const dy = board_y * 64;//this.sheet.tile_height;
 
-            const scaled_width = 64;//this.sheet.tile_width;
-            const scaled_height = 64;//this.sheet.tile_height;
+            const dx = board_x * this.tile_width;
+            const dy = board_y * this.tile_height;
 
             let ss = this.sheet.dark_image;
             if (state == TILE.selected) {
@@ -452,11 +458,8 @@ class GameBoard {
 
             ctx.drawImage(
                 ss,
-                sx, sy,
-                this.sheet.tile_width,
-                this.sheet.tile_height,
-                dx, dy,
-                scaled_width, scaled_height);
+                sx, sy, this.sheet.tile_width, this.sheet.tile_height,
+                dx, dy, this.tile_width, this.tile_height);
 
             if (state == TILE.selected) {
                 if (spriteIdx)
@@ -468,15 +471,15 @@ class GameBoard {
     }
 
     posToBoardIdx(x, y) {
-        let tile_x = Math.floor(x / this.sheet.tile_width);
-        let tile_y = Math.floor(y / this.sheet.tile_height);
+        let tile_x = Math.floor(x / this.tile_width);
+        let tile_y = Math.floor(y / this.tile_height);
         let idx = (tile_y * board.rows) + tile_x;
         return idx;
     }
 
     coordToPos(r, c) {
-        let x = (board.sheet.tile_width * r);
-        let y = (board.sheet.tile_height * c);
+        let x = (board.tile_width * r);
+        let y = (board.tile_height * c);
         return [x, y];
     }
 
@@ -691,8 +694,8 @@ class GameBoard {
     }
 
     mouseClick(board, xpos, ypos, interactive) {
-        const board_width = (board.rows * board.sheet.tile_width);
-        const board_height = (board.cols * board.sheet.tile_height);
+        const board_width = (board.rows * this.tile_width);
+        const board_height = (board.cols * this.tile_height);
 
         if ((xpos < 0) || (xpos > board_width)) {
             console.log("invalid xpos: ", xpos);
