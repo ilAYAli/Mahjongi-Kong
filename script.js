@@ -1,14 +1,15 @@
 "use strict";
 
 // ---[ state ]-----------------------------------------------------------------
+const canvas = document.getElementById('board_canvas');
+const ctx = canvas.getContext('2d');
+
 const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
 
 const spriteParam = urlParams.get('spriteIdx')
 const spriteIdx = spriteParam ? Number(spriteParam) : 0;
 
-const canvas = document.getElementById('board_canvas');
-const ctx = canvas.getContext('2d');
 
 let level = 0;
 const DEFAULT_TIMEOUT = 60 * 5;
@@ -21,9 +22,9 @@ const TILE = {
 }
 
 const SOLVED = {
-    all: Symbol("all"),
-    one: Symbol("one"),
-    none: Symbol("none"),
+    all:    Symbol("all"),
+    one:    Symbol("one"),
+    none:   Symbol("none"),
 }
 
 
@@ -122,8 +123,6 @@ class GameBoard {
 
         this.tiles = [];
         this.arrows = [];
-
-        this.shuffled = [];
 
         this.score = 0;
         this.margin = 0;
@@ -546,7 +545,7 @@ class GameBoard {
         return false;
     }
 
-    shuffle(interactive = true, attempt = 0) {
+    shuffle(interactive = true, attempt = 0, shuffled = []) {
         attempt++;
         if (interactive && this.demo_mode) {
             console.log("can't shuffle while demo is active");
@@ -585,20 +584,21 @@ class GameBoard {
         const tmp = this.tiles[t1_idx];
         this.tiles[t1_idx] = this.tiles[t2_idx]
         this.tiles[t2_idx] = tmp;
-        this.shuffled.push(t1_idx);
-        this.shuffled.push(t2_idx);
+        shuffled.push(t1_idx);
+        shuffled.push(t2_idx);
 
         const solvable = this.solve_board();
         if (!solvable) {
             console.log(attempt, ": not solvable, re-shuffling");
-            return this.shuffle(false, attempt);
+            return this.shuffle(false, attempt, shuffled);
         }
-        console.log("shuffled:", this.shuffled.length);
-        this.shuffled.forEach((elt) => {
+
+        console.log("shuffled:", shuffled.length);
+        shuffled.forEach((elt) => {
             this.tiles[elt][1] = TILE.selected;
         });
+
         this.draw(ctx);
-        this.shuffled = [];
         this.unselectAll();
 
         if (interactive)
@@ -687,6 +687,10 @@ class GameBoard {
         if (interactive) {
             if (status != SOLVED.none)
                 timer.elapsed += 60;
+            else {
+                alert("no moves found, shuffling..");
+                this.shuffle();
+            }
             this.unselectAll();
         }
 
