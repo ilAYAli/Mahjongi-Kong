@@ -4,7 +4,7 @@
 
 (Javascript not my main programming language, this was just made to inspire my kids to learn programming)
 
-Test: www.wahlman.no/wip/MahjongiKong
+Test: https://wahlman.no/code/MahjongiKong/
 
 
 demo/autosolver in action:
